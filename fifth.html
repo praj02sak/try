@@ -4,109 +4,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Birthday!</title>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHRmSe18ja6LbkMw26cZ0TC6kTfS7e6Jw",
+            authDomain: "praj-dcd94.firebaseapp.com",
+            databaseURL: "https://praj-dcd94-default-rtdb.firebaseio.com",
+            projectId: "praj-dcd94",
+            storageBucket: "praj-dcd94.firebasestorage.app",
+            messagingSenderId: "213462791749",
+            appId: "1:213462791749:web:3dc35fcd6597a6b86e952c"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Function to save a message
+        window.saveMessage = function () {
+            const message = document.getElementById("userMessage").value;
+            if (message) {
+                const dbRef = ref(database, "messages");
+                push(dbRef, { message: message, timestamp: Date.now() })
+                    .then(() => {
+                        document.getElementById("userMessage").value = "";
+                    })
+                    .catch(error => {
+                        console.error("Error saving message:", error);
+                    });
+            } else {
+                alert("Please write something before saving! ✍️");
+            }
+        };
+
+        // Function to load messages in real-time
+        function loadMessages() {
+            const messagesRef = ref(database, "messages");
+            onValue(messagesRef, (snapshot) => {
+                const messagesContainer = document.getElementById("messagesContainer");
+                messagesContainer.innerHTML = ""; // Clear previous messages
+                snapshot.forEach((childSnapshot) => {
+                    const msgData = childSnapshot.val();
+                    const messageElement = document.createElement("p");
+                    messageElement.textContent = msgData.message;
+                    messageElement.style.color = "#fff";
+                    messageElement.style.background = "#ff69b4";
+                    messageElement.style.padding = "10px";
+                    messageElement.style.borderRadius = "5px";
+                    messageElement.style.margin = "5px 0";
+                    messagesContainer.appendChild(messageElement);
+                });
+            });
+        }
+
+        // Load messages on page load
+        window.onload = loadMessages;
+    </script>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background: linear-gradient(45deg, #f9c6c9, #fce1e4);
-            font-family: 'Arial', sans-serif;
             text-align: center;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            color: #fff;
+            padding: 20px;
         }
-
         h1 {
-            font-size: 50px;
-            margin: 20px 0;
-            color: #d72638;
+            color: #fff;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-            animation: fadeIn 2s ease-in-out;
         }
-
-        p {
-            font-size: 22px;
-            color: #6a0572;
-            margin: 10px 20px;
-            animation: fadeIn 2s ease-in-out;
+        #messagesContainer {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #fff;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
         }
-
-        .emoji {
-            font-size: 40px;
-            margin: 10px;
-            animation: bounce 2s infinite;
-        }
-
         textarea {
             width: 300px;
             height: 100px;
-            border: 2px solid #6a0572;
+            border: 2px solid #fff;
             border-radius: 10px;
             font-size: 16px;
             padding: 10px;
             resize: none;
             outline: none;
             font-family: 'Arial', sans-serif;
+            background: rgba(255, 255, 255, 0.8);
         }
-
         button {
             margin-top: 10px;
             padding: 10px 20px;
             font-size: 18px;
             color: white;
-            background: #d72638;
+            background: #ff4081;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
-
         button:hover {
-            background: #f46036;
+            background: #e91e63;
         }
     </style>
 </head>
 <body>
-    <h1>Happy Birthday, My Love! 🎉🎂</h1>
-    <p>Wishing you a day filled with love, laughter, and happiness. 💖</p>
-    <p class="emoji">🎈🎁✨🎉🥳</p>
-    <p>Leave a special message for us to cherish forever:</p>
-
+    <h1>Happy Birthday To You My Girl! 🎉🎂</h1>
+    <p>Leave a special message:</p>
     <textarea id="userMessage" placeholder="Write your message here..."></textarea>
     <button onclick="saveMessage()">Save Message</button>
-
-    <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.getDatabase(app);
-
-        function saveMessage() {
-            const message = document.getElementById("userMessage").value;
-            if (message) {
-                // Save to Firebase Realtime Database
-                const dbRef = firebase.ref(database, "messages");
-                firebase.push(dbRef, { message: message, timestamp: Date.now() });
-                alert("Your message has been saved! ❤️");
-                document.getElementById("userMessage").value = ""; // Clear the textarea
-            } else {
-                alert("Please write something before saving! ✍️");
-            }
-        }
-    </script>
+    <div id="messagesContainer"></div>
 </body>
 </html>
