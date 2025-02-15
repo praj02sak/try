@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(45deg, #f9c6c9, #fce1e4);
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 50px;
+            margin: 20px 0;
+            color: #d72638;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        p {
+            font-size: 22px;
+            color: #6a0572;
+            margin: 10px 20px;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .emoji {
+            font-size: 40px;
+            margin: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        textarea {
+            width: 300px;
+            height: 100px;
+            border: 2px solid #6a0572;
+            border-radius: 10px;
+            font-size: 16px;
+            padding: 10px;
+            resize: none;
+            outline: none;
+            font-family: 'Arial', sans-serif;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 18px;
+            color: white;
+            background: #d72638;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background: #f46036;
+        }
+    </style>
+</head>
+<body>
+    <h1>Happy Birthday, My Love! 🎉🎂</h1>
+    <p>Wishing you a day filled with love, laughter, and happiness. 💖</p>
+    <p class="emoji">🎈🎁✨🎉🥳</p>
+    <p>Leave a special message for us to cherish forever:</p>
+
+    <textarea id="userMessage" placeholder="Write your message here..."></textarea>
+    <button onclick="saveMessage()">Save Message</button>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.getDatabase(app);
+
+        function saveMessage() {
+            const message = document.getElementById("userMessage").value;
+            if (message) {
+                // Save to Firebase Realtime Database
+                const dbRef = firebase.ref(database, "messages");
+                firebase.push(dbRef, { message: message, timestamp: Date.now() });
+                alert("Your message has been saved! ❤️");
+                document.getElementById("userMessage").value = ""; // Clear the textarea
+            } else {
+                alert("Please write something before saving! ✍️");
+            }
+        }
+    </script>
+</body>
+</html>
